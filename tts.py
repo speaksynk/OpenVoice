@@ -105,7 +105,12 @@ def main():
 
     os.mkdir(out_folder)
 
-    phrases = generate_audio(args.reference_speaker, phrases, args.language, tone_color_converter, device)
+    phrases = generate_audio(reference_speaker=args.reference_speaker, 
+                             phrases=phrases, 
+                             language=args.language, 
+                             tone_color_converter=tone_color_converter, 
+                             device=device, 
+                             work_dir=args.work_dir)
 
     print(f"Phrases {phrases}")
 
