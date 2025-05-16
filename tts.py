@@ -10,7 +10,7 @@ from melo.api import TTS
 
 import nltk   
 
-def generate_audio(reference_speaker, phrases, language, tone_color_converter, device):
+def generate_audio(reference_speaker, phrases, language, tone_color_converter, device, work_dir):
 
     target_se, audio_name = se_extractor.get_se(reference_speaker, tone_color_converter, vad=True)
 
@@ -25,7 +25,7 @@ def generate_audio(reference_speaker, phrases, language, tone_color_converter, d
     # }
 
 
-    src_path = f'/temp/tmp.wav'
+    src_path = f'{work_dir}/tmp.wav'
 
     # Speed is adjustable
     speed = 1.0
@@ -48,7 +48,7 @@ def generate_audio(reference_speaker, phrases, language, tone_color_converter, d
                 
                 source_se = torch.load(f'checkpoints_v2/base_speakers/ses/{speaker_key}.pth', map_location=device)
                 model.tts_to_file(phrase["translated"], speaker_id, src_path, speed=speed)
-                save_path = f'/temp/phrases/{i}_out.wav'
+                save_path = f'{work_dir}/phrases/{i}_out.wav'
 
                 # Run the tone color converter
                 encode_message = "@MyShell"
@@ -71,6 +71,7 @@ def options():
     parser = argparse.ArgumentParser(description='Inference code to clone and drive text to speech')
     parser.add_argument('--reference_speaker', '-s', type=str, required=True)
     parser.add_argument('--language', '-l', type=str, required=True)
+    parser.add_argument('--work_dir', '-w', type=str, required=True)
     args = parser.parse_args()
     return args
 
@@ -79,7 +80,7 @@ def main():
     args = options()
     print(f"args {args}")
 
-    with open("/temp/text.json", "r") as f:
+    with open(f"{args.work_dir}/text.json", "r") as f:
         phrases = json.load(f)
 
     texts = {}
@@ -95,23 +96,25 @@ def main():
     ckpt_converter = 'checkpoints_v2/converter'
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
-
     tone_color_converter = ToneColorConverter(f'{ckpt_converter}/config.json', device=device)
     tone_color_converter.load_ckpt(f'{ckpt_converter}/checkpoint.pth')
 
-    out_folder = "/temp/phrases/"
+    out_folder = f"{args.work_dir}/phrases/"
     if os.path.exists(out_folder):
         shutil.rmtree(out_folder)
 
     os.mkdir(out_folder)
 
-    phrases = generate_audio(args.reference_speaker, phrases, args.language, tone_color_converter, device)
-
+    phrases = generate_audio(reference_speaker=args.reference_speaker, 
+                             phrases=phrases, 
+                             language=args.language, 
+                             tone_color_converter=tone_color_converter, 
+                             device=device, 
+                             work_dir=args.work_dir)
 
     print(f"Phrases {phrases}")
 
-
-    with open("/temp/text.json", "w") as f:
+    with open(f"{args.work_dir}/text.json", "w") as f:
         json.dump(phrases, f)
             
 if __name__ == "__main__":
