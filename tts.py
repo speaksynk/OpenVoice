@@ -96,7 +96,7 @@ def main():
     ckpt_converter = 'checkpoints_v2/converter'
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
-    tone_color_converter = ToneColorConverter(f'{ckpt_converter}/config.json', device=device)
+    tone_color_converter = ToneColorConverter(f'{ckpt_converter}/config.json', device=device, enable_watermark=False)
     tone_color_converter.load_ckpt(f'{ckpt_converter}/checkpoint.pth')
 
     out_folder = f"{args.work_dir}/phrases/"
