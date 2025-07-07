@@ -9,7 +9,7 @@
 Install rest of the dependencies needed for OpenVoice
 
 ```
-pip install -r cleaned_requirements.txt
+pip install --no-deps -r cleaned_requirements.txt
 ```
 
 Download the averaged_perceptron_tagger_eng:
