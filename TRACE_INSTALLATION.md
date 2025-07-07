@@ -2,17 +2,17 @@
 
 ## Installation
 
-### Pytorch NeuronX Installtion Doc
+### PyTorch NeuronX Installtion Doc
 
 [https://awsdocs-neuron.readthedocs-hosted.com/en/latest/general/setup/torch-neuronx.html#setup-torch-neuronx](https://awsdocs-neuron.readthedocs-hosted.com/en/latest/general/setup/torch-neuronx.html#setup-torch-neuronx)
 
-install rest of dependecies needed for OpenVoice
+Install rest of the dependencies needed for OpenVoice
 
 ```
 pip install -r cleaned_requirements.txt
 ```
 
-download averaged_perceptron_tagger_eng
+Download the averaged_perceptron_tagger_eng:
 
 ```
 python dl_averaged_perceptron_tagger_eng.py
@@ -22,11 +22,11 @@ Download the checkpoint from [here](https://myshell-public-repo-host.s3.amazonaw
 
 ## Trace
 
-first time run with --generate_target_input or -g
+first time run with **--generate_target_input** or **-g**
 to generate target audio and target_se
 
 ```
 python trace_neuron.py
 ```
 
---cpu_backend or -c to trace on CPU
+> **--cpu_backend** or **-c** to trace on CPU
