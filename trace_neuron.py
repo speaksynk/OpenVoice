@@ -7,18 +7,17 @@ import torch
 import torch_neuronx
 import torch_xla.core.xla_model as xm
 
+import pickle
+import argparse
+
 from openvoice.api import ToneColorConverter
 from openvoice.mel_processing import spectrogram_torch
 from openvoice import se_extractor, utils
 from openvoice.models import SynthesizerTrn
 
 from melo.api import TTS
-
 import librosa
 
-import pickle
-
-import argparse
 
 def options():
     parser = argparse.ArgumentParser(description='trace inferentia args for OpenVoice')
@@ -27,7 +26,6 @@ def options():
     parser.add_argument('--output_folder', "-f", type=str, default="./output")
     parser.add_argument('--cpu_backend', "-c", action='store_true')
     parser.add_argument('--compiler_work_dir', "-w", type=str, default="./work")
-
 
     args = parser.parse_args()
     return args
@@ -38,7 +36,6 @@ def main():
     args = options()
 
     language = "EN_NEWEST"
-
     audio_src_path = "generated_voice.mp3"
 
     tts_device = "cpu"
@@ -61,7 +58,6 @@ def main():
 
         target_se, audio_name = se_extractor.get_se(args.reference_speaker, tone_color_converter, vad=True)
 
-        # Save to pickle file
         with open("se_data.pkl", "wb") as f:
             pickle.dump((target_se, audio_name), f)
 
@@ -75,19 +71,6 @@ def main():
     source_se = torch.load(f'checkpoints_v2/base_speakers/ses/{speaker_file_key}.pth', map_location=tts_device)
 
     model = SynthesizerTrn(len(getattr(hps, 'symbols', [])), hps.data.filter_length // 2 + 1,n_speakers=hps.data.n_speakers, **hps.model).to(trace_device)
-
-    #run on cuda locally to test
-    ##################################################################################################################
-    # with torch.no_grad():
-    #     y = torch.FloatTensor(audio).to("cuda")
-    #     y = y.unsqueeze(0)
-    #     spec = spectrogram_torch(y, hps.data.filter_length,
-    #                             hps.data.sampling_rate, hps.data.hop_length, hps.data.win_length,
-    #                             center=False).to(device)
-    #     spec_lengths = torch.LongTensor([spec.size(-1)]).to(device)
-    #     # Run the original PyTorch BERT model on CPU
-    #     audio = model.voice_conversion(spec, spec_lengths, sid_src=source_se, sid_tgt=target_se, tau=0.3)[0]
-    ##################################################################################################################
 
     if not args.generate_target_input:
         with open("se_data.pkl", "rb") as f:
