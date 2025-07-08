@@ -110,11 +110,11 @@ def main():
         compiler_args="--target inf2"
         cpu_backend=True
 
-    model_neuron = torch_neuronx.trace(model.voice_conversion, example_inputs, compiler_args=compiler_args, cpu_backend=cpu_backend, compiler_workdir=args.compiler_work_dir)
+    model_neuron = torch_neuronx.trace(func=model.voice_conversion, example_inputs=example_inputs, compiler_args=compiler_args, cpu_backend=cpu_backend, compiler_workdir=args.compiler_work_dir)
 
     # Save the TorchScript for inference deployment
-    # filename = 'model.pt'
-    # torch.jit.save(model_neuron, filename)
+    filename = 'model.pt'
+    torch.jit.save(model_neuron, filename)
 
 
 if __name__ == "__main__":
