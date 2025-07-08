@@ -20,6 +20,10 @@ python dl_averaged_perceptron_tagger_eng.py
 
 Download the checkpoint from [here](https://myshell-public-repo-host.s3.amazonaws.com/openvoice/checkpoints_v2_0417.zip) and extract it to the `checkpoints_v2` folder.
 
+```
+python -m unidic download
+```
+
 ## Trace
 
 first time run with **--generate_target_input** or **-g**
